@@ -31,6 +31,25 @@ const quoteSchema = z.object({
     .max(1000, { message: "Message must be less than 1000 characters" }),
 });
 
+const messageSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(1, { message: "Name is required" })
+    .max(100, { message: "Name must be less than 100 characters" }),
+  email: z.string()
+    .trim()
+    .email({ message: "Invalid email address" })
+    .max(255, { message: "Email must be less than 255 characters" }),
+  subject: z.string()
+    .trim()
+    .min(3, { message: "Subject must be at least 3 characters" })
+    .max(200, { message: "Subject must be less than 200 characters" }),
+  message: z.string()
+    .trim()
+    .min(10, { message: "Message must be at least 10 characters" })
+    .max(1000, { message: "Message must be less than 1000 characters" }),
+});
+
 type CompanyInfo = {
   company_name: string;
   phone: string;
@@ -41,14 +60,22 @@ type CompanyInfo = {
 
 export default function Contact() {
   const [info, setInfo] = useState<CompanyInfo | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [quoteLoading, setQuoteLoading] = useState(false);
+  const [messageLoading, setMessageLoading] = useState(false);
+  const [quoteFormData, setQuoteFormData] = useState({
     name: "",
     email: "",
     phone: "",
     message: "",
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [messageFormData, setMessageFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+  const [quoteErrors, setQuoteErrors] = useState<Record<string, string>>({});
+  const [messageErrors, setMessageErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     loadCompanyInfo();
@@ -63,12 +90,12 @@ export default function Contact() {
     if (data) setInfo(data as CompanyInfo);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleQuoteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrors({});
+    setQuoteErrors({});
 
     // Validate form data
-    const result = quoteSchema.safeParse(formData);
+    const result = quoteSchema.safeParse(quoteFormData);
     
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -77,12 +104,12 @@ export default function Contact() {
           fieldErrors[error.path[0] as string] = error.message;
         }
       });
-      setErrors(fieldErrors);
+      setQuoteErrors(fieldErrors);
       toast.error("Please fix the errors in the form");
       return;
     }
 
-    setLoading(true);
+    setQuoteLoading(true);
 
     try {
       // Get current user if logged in
@@ -105,7 +132,7 @@ export default function Contact() {
       toast.success("Quote request submitted successfully! We'll get back to you soon.");
       
       // Reset form
-      setFormData({
+      setQuoteFormData({
         name: "",
         email: "",
         phone: "",
@@ -115,7 +142,63 @@ export default function Contact() {
       console.error("Error submitting quote:", error);
       toast.error("Failed to submit quote request. Please try again.");
     } finally {
-      setLoading(false);
+      setQuoteLoading(false);
+    }
+  };
+
+  const handleMessageSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessageErrors({});
+
+    // Validate form data
+    const result = messageSchema.safeParse(messageFormData);
+    
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.errors.forEach((error) => {
+        if (error.path[0]) {
+          fieldErrors[error.path[0] as string] = error.message;
+        }
+      });
+      setMessageErrors(fieldErrors);
+      toast.error("Please fix the errors in the form");
+      return;
+    }
+
+    setMessageLoading(true);
+
+    try {
+      // Get current user if logged in
+      const { data: { user } } = await supabase.auth.getUser();
+
+      // Insert message
+      const { error } = await supabase
+        .from("messages")
+        .insert({
+          customer_name: result.data.name,
+          customer_email: result.data.email,
+          subject: result.data.subject,
+          message: result.data.message,
+          user_id: user?.id || null,
+          status: "pending",
+        });
+
+      if (error) throw error;
+
+      toast.success("Message sent successfully! We'll respond to you soon.");
+      
+      // Reset form
+      setMessageFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast.error("Failed to send message. Please try again.");
+    } finally {
+      setMessageLoading(false);
     }
   };
 
@@ -219,7 +302,7 @@ export default function Contact() {
               </p>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleQuoteSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="name">Name *</Label>
@@ -227,12 +310,12 @@ export default function Contact() {
                       id="name"
                       type="text"
                       placeholder="Your full name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className={errors.name ? "border-destructive" : ""}
+                      value={quoteFormData.name}
+                      onChange={(e) => setQuoteFormData({ ...quoteFormData, name: e.target.value })}
+                      className={quoteErrors.name ? "border-destructive" : ""}
                     />
-                    {errors.name && (
-                      <p className="text-sm text-destructive mt-1">{errors.name}</p>
+                    {quoteErrors.name && (
+                      <p className="text-sm text-destructive mt-1">{quoteErrors.name}</p>
                     )}
                   </div>
 
@@ -242,12 +325,12 @@ export default function Contact() {
                       id="email"
                       type="email"
                       placeholder="your.email@example.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className={errors.email ? "border-destructive" : ""}
+                      value={quoteFormData.email}
+                      onChange={(e) => setQuoteFormData({ ...quoteFormData, email: e.target.value })}
+                      className={quoteErrors.email ? "border-destructive" : ""}
                     />
-                    {errors.email && (
-                      <p className="text-sm text-destructive mt-1">{errors.email}</p>
+                    {quoteErrors.email && (
+                      <p className="text-sm text-destructive mt-1">{quoteErrors.email}</p>
                     )}
                   </div>
                 </div>
@@ -258,12 +341,12 @@ export default function Contact() {
                     id="phone"
                     type="tel"
                     placeholder="+1 (555) 123-4567"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className={errors.phone ? "border-destructive" : ""}
+                    value={quoteFormData.phone}
+                    onChange={(e) => setQuoteFormData({ ...quoteFormData, phone: e.target.value })}
+                    className={quoteErrors.phone ? "border-destructive" : ""}
                   />
-                  {errors.phone && (
-                    <p className="text-sm text-destructive mt-1">{errors.phone}</p>
+                  {quoteErrors.phone && (
+                    <p className="text-sm text-destructive mt-1">{quoteErrors.phone}</p>
                   )}
                 </div>
 
@@ -273,26 +356,116 @@ export default function Contact() {
                     id="message"
                     placeholder="Please describe your requirements, including product specifications, quantity, and any special needs..."
                     rows={6}
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className={errors.message ? "border-destructive" : ""}
+                    value={quoteFormData.message}
+                    onChange={(e) => setQuoteFormData({ ...quoteFormData, message: e.target.value })}
+                    className={quoteErrors.message ? "border-destructive" : ""}
                   />
-                  {errors.message && (
-                    <p className="text-sm text-destructive mt-1">{errors.message}</p>
+                  {quoteErrors.message && (
+                    <p className="text-sm text-destructive mt-1">{quoteErrors.message}</p>
                   )}
                 </div>
 
                 <Button 
                   type="submit" 
                   className="w-full"
-                  disabled={loading}
+                  disabled={quoteLoading}
                 >
-                  {loading ? (
+                  {quoteLoading ? (
                     "Submitting..."
                   ) : (
                     <>
                       <Send className="mr-2 h-4 w-4" />
                       Submit Quote Request
+                    </>
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Contact Message Form */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Send Us a Message</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Have a question or inquiry? Send us a message and we'll respond promptly
+              </p>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleMessageSubmit} className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="msg-name">Name *</Label>
+                    <Input
+                      id="msg-name"
+                      type="text"
+                      placeholder="Your full name"
+                      value={messageFormData.name}
+                      onChange={(e) => setMessageFormData({ ...messageFormData, name: e.target.value })}
+                      className={messageErrors.name ? "border-destructive" : ""}
+                    />
+                    {messageErrors.name && (
+                      <p className="text-sm text-destructive mt-1">{messageErrors.name}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="msg-email">Email *</Label>
+                    <Input
+                      id="msg-email"
+                      type="email"
+                      placeholder="your.email@example.com"
+                      value={messageFormData.email}
+                      onChange={(e) => setMessageFormData({ ...messageFormData, email: e.target.value })}
+                      className={messageErrors.email ? "border-destructive" : ""}
+                    />
+                    {messageErrors.email && (
+                      <p className="text-sm text-destructive mt-1">{messageErrors.email}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="msg-subject">Subject *</Label>
+                  <Input
+                    id="msg-subject"
+                    type="text"
+                    placeholder="What is your message about?"
+                    value={messageFormData.subject}
+                    onChange={(e) => setMessageFormData({ ...messageFormData, subject: e.target.value })}
+                    className={messageErrors.subject ? "border-destructive" : ""}
+                  />
+                  {messageErrors.subject && (
+                    <p className="text-sm text-destructive mt-1">{messageErrors.subject}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="msg-message">Message *</Label>
+                  <Textarea
+                    id="msg-message"
+                    placeholder="Type your message here..."
+                    rows={6}
+                    value={messageFormData.message}
+                    onChange={(e) => setMessageFormData({ ...messageFormData, message: e.target.value })}
+                    className={messageErrors.message ? "border-destructive" : ""}
+                  />
+                  {messageErrors.message && (
+                    <p className="text-sm text-destructive mt-1">{messageErrors.message}</p>
+                  )}
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full"
+                  disabled={messageLoading}
+                >
+                  {messageLoading ? (
+                    "Sending..."
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      Send Message
                     </>
                   )}
                 </Button>
