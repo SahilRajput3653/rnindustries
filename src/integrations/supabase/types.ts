@@ -47,6 +47,48 @@ export type Database = {
         }
         Relationships: []
       }
+      messages: {
+        Row: {
+          admin_reply: string | null
+          created_at: string
+          customer_email: string
+          customer_name: string
+          id: string
+          message: string
+          replied_at: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          admin_reply?: string | null
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          id?: string
+          message: string
+          replied_at?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          admin_reply?: string | null
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          id?: string
+          message?: string
+          replied_at?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
