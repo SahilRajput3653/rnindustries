@@ -307,14 +307,14 @@ export default function Contact() {
               </p>
               <div className="relative aspect-video rounded-lg overflow-hidden border-2 border-border hover:border-primary transition-colors group">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3500.5846974782967!2d77.0698!3d28.6784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d047b5b5b5b5b%3A0x0!2sNangloi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1234567890"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3499.3647984!2d77.06534!3d28.68067!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d047aa7b7b7b7%3A0x7b7b7b7b7b7b7b7b!2sKunwar%20Singh%20Nagar%2C%20Nangloi%2C%20Delhi%2C%20110041!5e0!3m2!1sen!2sin!4v1234567890"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="Factory Location - H-3/318, Kunwar Singh Nagar, Nangloi, Delhi"
+                  title="Factory Location - H-3/318, Kunwar Singh Nagar, Gali No. 6, Nangloi, Delhi-41"
                   className="grayscale-[30%] group-hover:grayscale-0 transition-all duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent pointer-events-none" />
