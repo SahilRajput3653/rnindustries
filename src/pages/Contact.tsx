@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Mail, MapPin, Phone, Send } from "lucide-react";
+import { Mail, MapPin, Phone, Send, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -223,11 +223,23 @@ export default function Contact() {
                 <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                   <Phone className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle>Phone</CardTitle>
+                <CardTitle>Phone / WhatsApp</CardTitle>
               </CardHeader>
-              <CardContent>
-                <a href={`tel:${info?.phone}`} className="text-primary hover:underline">
-                  {info?.phone || "+1 (555) 123-4567"}
+              <CardContent className="space-y-2">
+                <a 
+                  href={`tel:${info?.phone}`} 
+                  className="block text-primary hover:underline"
+                >
+                  {info?.phone || "+91 9599184546"}
+                </a>
+                <a
+                  href={`https://wa.me/${(info?.phone || "+919599184546").replace(/[^0-9]/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm bg-[#25D366] text-white px-4 py-2 rounded-lg hover:bg-[#20BA5A] transition-colors"
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  Chat on WhatsApp
                 </a>
               </CardContent>
             </Card>
