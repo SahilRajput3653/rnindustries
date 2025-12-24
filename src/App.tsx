@@ -13,6 +13,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
 import Contact from "./pages/Contact";
+import About from "./pages/About";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminOrders from "./pages/admin/AdminOrders";
@@ -37,6 +38,7 @@ const App = () => {
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/orders" element={<Orders />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/about" element={<About />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/products" element={<AdminProducts />} />
               <Route path="/admin/orders" element={<AdminOrders />} />

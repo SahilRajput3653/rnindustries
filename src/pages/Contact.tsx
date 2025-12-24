@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -112,6 +113,8 @@ export default function Contact() {
           </Card>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
