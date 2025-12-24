@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, Calendar, CheckCircle, XCircle } from "lucide-react";
+import { Mail, User, Calendar, CheckCircle, XCircle, Phone, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 
 type QuoteStatus = "pending" | "approved" | "rejected";
@@ -15,6 +15,8 @@ type Quote = {
   id: string;
   customer_name: string;
   customer_email: string;
+  phone: string | null;
+  message: string | null;
   status: QuoteStatus;
   created_at: string;
 };
@@ -206,6 +208,17 @@ const AdminQuotes = () => {
                           {quote.customer_email}
                         </a>
                       </div>
+                      {quote.phone && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+                          <Phone className="h-4 w-4" />
+                          <a 
+                            href={`tel:${quote.phone}`}
+                            className="hover:text-primary hover:underline"
+                          >
+                            {quote.phone}
+                          </a>
+                        </div>
+                      )}
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Calendar className="h-4 w-4" />
                         <span>
@@ -225,6 +238,17 @@ const AdminQuotes = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
+                  {quote.message && (
+                    <div className="mb-4 p-4 bg-muted/50 rounded-lg">
+                      <div className="flex items-start gap-2 mb-2">
+                        <MessageSquare className="h-4 w-4 text-muted-foreground mt-0.5" />
+                        <p className="text-sm font-semibold">Requirements:</p>
+                      </div>
+                      <p className="text-sm text-muted-foreground whitespace-pre-wrap pl-6">
+                        {quote.message}
+                      </p>
+                    </div>
+                  )}
                   <div className="flex gap-2">
                     <Button
                       onClick={() => updateQuoteStatus(quote.id, "approved")}
