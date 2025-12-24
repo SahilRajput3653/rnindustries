@@ -273,35 +273,50 @@ export default function Contact() {
             </Card>
           </div>
 
-          <Card>
+          <Card className="hover:shadow-lg transition-all duration-300">
             <CardHeader>
-              <CardTitle>Visit Our Factory</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-primary" />
+                Visit Our Factory
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
-                {info?.address || "123 Industrial Ave, Manufacturing District, City, State 12345"}
+                {info?.address || "H-3/318, Kunwar Singh Nagar, Gali No. 6, Nangloi, Delhi-41"}
               </p>
-              <div className="aspect-video rounded-lg overflow-hidden border">
+              <div className="relative aspect-video rounded-lg overflow-hidden border-2 border-border hover:border-primary transition-colors group">
                 <iframe
-                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(info?.address || "H-3/318, Kunwar Singh Nagar, Gali No. 6, Nangloi, Delhi-41")}`}
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3500.5846974782967!2d77.0698!3d28.6784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d047b5b5b5b5b%3A0x0!2sNangloi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1234567890"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="Factory Location"
+                  title="Factory Location - H-3/318, Kunwar Singh Nagar, Nangloi, Delhi"
+                  className="grayscale-[30%] group-hover:grayscale-0 transition-all duration-300"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent pointer-events-none" />
               </div>
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(info?.address || "H-3/318, Kunwar Singh Nagar, Gali No. 6, Nangloi, Delhi-41")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 mt-4 text-sm text-primary hover:underline"
-              >
-                <MapPin className="h-4 w-4" />
-                Open in Google Maps
-              </a>
+              <div className="flex gap-2 mt-4">
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(info?.address || "H-3/318, Kunwar Singh Nagar, Gali No. 6, Nangloi, Delhi-41")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 rounded-lg transition-colors"
+                >
+                  <MapPin className="h-4 w-4" />
+                  Open in Google Maps
+                </a>
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(info?.address || "H-3/318, Kunwar Singh Nagar, Gali No. 6, Nangloi, Delhi-41")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-foreground bg-secondary hover:bg-secondary/80 rounded-lg transition-colors"
+                >
+                  Get Directions
+                </a>
+              </div>
             </CardContent>
           </Card>
 
