@@ -18,7 +18,7 @@ const Index = () => {
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
             Leading supplier of high-quality industrial equipment in Delhi. 
-            Quality, reliability, and excellence since 2000.
+            Quality, reliability, and excellence since 2001.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" asChild>
