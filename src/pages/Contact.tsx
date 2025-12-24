@@ -96,18 +96,26 @@ export default function Contact() {
               <p className="text-muted-foreground mb-4">
                 {info?.address || "123 Industrial Ave, Manufacturing District, City, State 12345"}
               </p>
+              <div className="aspect-video rounded-lg overflow-hidden border">
+                <iframe
+                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(info?.address || "H-3/318, Kunwar Singh Nagar, Gali No. 6, Nangloi, Delhi-41")}`}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Factory Location"
+                />
+              </div>
               <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(info?.address || "123 Industrial Ave, Manufacturing District, City, State 12345")}`}
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(info?.address || "H-3/318, Kunwar Singh Nagar, Gali No. 6, Nangloi, Delhi-41")}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block"
+                className="inline-flex items-center gap-2 mt-4 text-sm text-primary hover:underline"
               >
-                <div className="aspect-video bg-muted rounded-lg flex items-center justify-center hover:bg-muted/80 transition-colors cursor-pointer group">
-                  <div className="text-center">
-                    <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-2 group-hover:text-primary transition-colors" />
-                    <p className="text-sm text-muted-foreground group-hover:text-primary transition-colors">Click to open in Google Maps</p>
-                  </div>
-                </div>
+                <MapPin className="h-4 w-4" />
+                Open in Google Maps
               </a>
             </CardContent>
           </Card>
