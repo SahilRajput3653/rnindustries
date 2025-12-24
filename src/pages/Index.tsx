@@ -2,11 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   ArrowRight, Package, Shield, Zap, Phone, Factory, 
-  Award, Users, Clock, CheckCircle2, Star, TrendingUp,
+  Award, Users, CheckCircle2, TrendingUp,
   Wrench, Settings, Target
 } from "lucide-react";
 
@@ -56,27 +56,6 @@ export default function Index() {
       title: "Precision Engineering",
       description: "State-of-the-art technology for superior performance",
       color: "from-yellow-500 to-orange-500"
-    }
-  ];
-
-  const testimonials = [
-    {
-      name: "Rajesh Kumar",
-      company: "Kumar Manufacturing Ltd.",
-      content: "Outstanding quality and service. RN Industries has been our trusted partner for over 10 years.",
-      rating: 5
-    },
-    {
-      name: "Priya Sharma",
-      company: "Sharma Industries",
-      content: "The machinery is top-notch and the support team is always responsive. Highly recommended!",
-      rating: 5
-    },
-    {
-      name: "Amit Patel",
-      company: "Patel Engineering Works",
-      content: "Best industrial equipment supplier in Delhi. Their attention to detail is impressive.",
-      rating: 5
     }
   ];
 
@@ -192,44 +171,6 @@ export default function Index() {
                 </Card>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="mb-16 text-center">
-            <Badge className="mb-4" variant="secondary">Testimonials</Badge>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">What Our Clients Say</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Trusted by leading industries across India
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <Card 
-                key={index}
-                className="hover-lift"
-                style={{ animationDelay: `${index * 0.15}s` }}
-              >
-                <CardHeader>
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <CardDescription className="text-base italic">
-                    "{testimonial.content}"
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="font-semibold">{testimonial.name}</p>
-                  <p className="text-sm text-muted-foreground">{testimonial.company}</p>
-                </CardContent>
-              </Card>
-            ))}
           </div>
         </div>
       </section>
