@@ -185,6 +185,27 @@ export default function Contact() {
 
       if (error) throw error;
 
+      // Send email notification to owner
+      try {
+        const { error: emailError } = await supabase.functions.invoke('send-contact-email', {
+          body: {
+            customerName: result.data.name,
+            customerEmail: result.data.email,
+            subject: result.data.subject,
+            message: result.data.message,
+            ownerEmail: info?.email || "vermaravinder.515@gmail.com",
+          },
+        });
+
+        if (emailError) {
+          console.error("Email sending failed:", emailError);
+          // Don't block the user if email fails
+        }
+      } catch (emailErr) {
+        console.error("Email error:", emailErr);
+        // Continue even if email fails
+      }
+
       toast.success("Message sent successfully! We'll respond to you soon.");
       
       // Reset form
