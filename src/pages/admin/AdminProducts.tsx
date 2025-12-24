@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Navbar } from "@/components/Navbar";
+import { AdminLayout } from "@/components/AdminLayout";
 import { ImageUpload } from "@/components/ImageUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -167,29 +167,20 @@ export default function AdminProducts() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Product Management</h1>
-            <p className="text-muted-foreground">{products.length} products</p>
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={() => navigate("/admin")} variant="outline">
-              Back to Dashboard
-            </Button>
-            <Dialog open={dialogOpen} onOpenChange={(open) => {
-              setDialogOpen(open);
-              if (!open) resetForm();
-            }}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Product
-                </Button>
-              </DialogTrigger>
+    <AdminLayout title="Product Management">
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <p className="text-muted-foreground">{products.length} products total</p>
+          <Dialog open={dialogOpen} onOpenChange={(open) => {
+            setDialogOpen(open);
+            if (!open) resetForm();
+          }}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Product
+              </Button>
+            </DialogTrigger>
               <DialogContent className="max-w-2xl">
                 <DialogHeader>
                   <DialogTitle>
@@ -264,9 +255,8 @@ export default function AdminProducts() {
               </DialogContent>
             </Dialog>
           </div>
-        </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
             <Card key={product.id}>
               <CardHeader className="pb-3">
@@ -331,6 +321,6 @@ export default function AdminProducts() {
           ))}
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 }
