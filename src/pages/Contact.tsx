@@ -95,9 +95,19 @@ export default function Contact() {
               <p className="text-muted-foreground mb-4">
                 {info?.address || "123 Industrial Ave, Manufacturing District, City, State 12345"}
               </p>
-              <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                <MapPin className="h-12 w-12 text-muted-foreground" />
-              </div>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(info?.address || "123 Industrial Ave, Manufacturing District, City, State 12345")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
+              >
+                <div className="aspect-video bg-muted rounded-lg flex items-center justify-center hover:bg-muted/80 transition-colors cursor-pointer group">
+                  <div className="text-center">
+                    <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-2 group-hover:text-primary transition-colors" />
+                    <p className="text-sm text-muted-foreground group-hover:text-primary transition-colors">Click to open in Google Maps</p>
+                  </div>
+                </div>
+              </a>
             </CardContent>
           </Card>
         </div>
