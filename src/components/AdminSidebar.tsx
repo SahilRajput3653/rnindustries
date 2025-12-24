@@ -5,7 +5,11 @@ import { useTheme } from "@/components/ThemeProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-export function AdminSidebar() {
+type AdminSidebarProps = {
+  onNavigate?: () => void;
+};
+
+export function AdminSidebar({ onNavigate }: AdminSidebarProps = {}) {
   const location = useLocation();
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
@@ -37,7 +41,11 @@ export function AdminSidebar() {
           const isActive = location.pathname === item.path;
           
           return (
-            <Link key={item.path} to={item.path}>
+            <Link 
+              key={item.path} 
+              to={item.path}
+              onClick={onNavigate}
+            >
               <div
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                   isActive

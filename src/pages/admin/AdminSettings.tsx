@@ -266,14 +266,16 @@ export default function AdminSettings() {
   return (
     <AdminLayout title="Settings">
       <Tabs defaultValue="company" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="company" className="flex items-center gap-2">
+        <TabsList className="grid w-full grid-cols-2 h-auto">
+          <TabsTrigger value="company" className="flex items-center gap-2 py-3">
             <Building2 className="h-4 w-4" />
-            Company Info
+            <span className="hidden sm:inline">Company Info</span>
+            <span className="sm:hidden">Company</span>
           </TabsTrigger>
-          <TabsTrigger value="admins" className="flex items-center gap-2">
+          <TabsTrigger value="admins" className="flex items-center gap-2 py-3">
             <Users className="h-4 w-4" />
-            Admin Users
+            <span className="hidden sm:inline">Admin Users</span>
+            <span className="sm:hidden">Admins</span>
           </TabsTrigger>
         </TabsList>
 
@@ -359,7 +361,7 @@ export default function AdminSettings() {
                 )}
               </div>
 
-              <Button onClick={saveCompanyInfo} disabled={saving} className="w-full">
+              <Button onClick={saveCompanyInfo} disabled={saving} className="w-full sm:w-auto">
                 <Save className="mr-2 h-4 w-4" />
                 {saving ? "Saving..." : "Save Changes"}
               </Button>
@@ -378,15 +380,16 @@ export default function AdminSettings() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Input
                     type="email"
                     placeholder="user@example.com"
                     value={newAdminEmail}
                     onChange={(e) => setNewAdminEmail(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && addAdmin()}
+                    className="flex-1"
                   />
-                  <Button onClick={addAdmin}>
+                  <Button onClick={addAdmin} className="w-full sm:w-auto">
                     <UserPlus className="mr-2 h-4 w-4" />
                     Add Admin
                   </Button>
@@ -411,20 +414,20 @@ export default function AdminSettings() {
                     admins.map((admin) => (
                       <div
                         key={admin.id}
-                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                        className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors gap-3"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-full bg-primary/10">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          <div className="p-2 rounded-full bg-primary/10 flex-shrink-0">
                             <Shield className="h-4 w-4 text-primary" />
                           </div>
-                          <div>
-                            <p className="font-medium">{admin.email}</p>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium truncate">{admin.email}</p>
                             <p className="text-sm text-muted-foreground">
                               Added {new Date(admin.created_at).toLocaleDateString()}
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 justify-end sm:justify-start">
                           <Badge>Admin</Badge>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
@@ -432,7 +435,7 @@ export default function AdminSettings() {
                                 <Trash2 className="h-4 w-4 text-destructive" />
                               </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent>
+                            <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
                               <AlertDialogHeader>
                                 <AlertDialogTitle>Remove Admin Access</AlertDialogTitle>
                                 <AlertDialogDescription>
@@ -440,11 +443,11 @@ export default function AdminSettings() {
                                   They will no longer be able to access the admin panel.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                                <AlertDialogCancel className="w-full sm:w-auto">Cancel</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => removeAdmin(admin.id, admin.email)}
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full sm:w-auto"
                                 >
                                   Remove
                                 </AlertDialogAction>
