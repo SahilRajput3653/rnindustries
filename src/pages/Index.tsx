@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Package, Shield, Zap } from "lucide-react";
@@ -12,36 +13,33 @@ export default function Index() {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative py-20 md:py-32 overflow-hidden">
+      <section className="relative py-32 md:py-40 overflow-hidden bg-gradient-to-br from-primary via-accent to-primary">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
-              <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                RN INDUSTRIES
-              </span>
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white animate-fade-in">
+              Ready to Get Started?
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-              Leading Manufacturer of Industrial Machinery & Equipment
+            <p className="text-lg md:text-xl text-white/90 mb-8 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+              Browse our catalog and request a quote for your industrial machinery needs.
             </p>
-            <p className="text-lg text-muted-foreground mb-12 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-              Quality products, reliable service, innovative solutions
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: "0.3s" }}>
-              <Button size="lg" onClick={() => navigate("/products")} className="group">
-                View Products
+            <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
+              <Button 
+                size="lg" 
+                variant="secondary"
+                onClick={() => navigate("/products")} 
+                className="group bg-muted hover:bg-muted/90 text-foreground"
+              >
+                Explore Products
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button size="lg" variant="outline" onClick={() => navigate("/contact")}>
-                Contact Us
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Decorative gradient background */}
+        {/* Decorative elements */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-accent/5 rounded-full blur-3xl" />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
         </div>
       </section>
 
@@ -99,24 +97,8 @@ export default function Index() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <Card className="bg-gradient-to-r from-primary to-accent text-primary-foreground">
-            <CardContent className="p-12 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Ready to Get Started?
-              </h2>
-              <p className="text-xl mb-8 opacity-90">
-                Browse our catalog and find the perfect machinery for your needs
-              </p>
-              <Button size="lg" variant="secondary" onClick={() => navigate("/products")}>
-                Explore Products
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+      <Footer />
+
     </div>
   );
 }
