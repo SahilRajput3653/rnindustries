@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { AdminLayout } from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Mail, User, Calendar, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 type QuoteStatus = "pending" | "approved" | "rejected";
@@ -86,66 +89,170 @@ const AdminQuotes = () => {
     }
   };
 
+  const getStatusVariant = (status: QuoteStatus): "default" | "secondary" | "destructive" => {
+    if (status === "approved") return "default";
+    if (status === "rejected") return "destructive";
+    return "secondary";
+  };
+
   if (loading) {
-    return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
+    return (
+      <AdminLayout title="Quote Management">
+        <div className="space-y-6">
+          <div className="grid gap-4">
+            {[1, 2, 3].map((i) => (
+              <Card key={i}>
+                <CardHeader>
+                  <Skeleton className="h-6 w-48" />
+                  <Skeleton className="h-4 w-64 mt-2" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-10 w-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </AdminLayout>
+    );
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Quote Management</h1>
-        <Button onClick={() => navigate("/admin")}>Back to Dashboard</Button>
-      </div>
-
-      <div className="grid gap-4">
-        {quotes.length === 0 ? (
+    <AdminLayout title="Quote Management">
+      <div className="space-y-6">
+        {/* Stats Summary */}
+        <div className="grid md:grid-cols-3 gap-4">
           <Card>
             <CardContent className="p-6">
-              <p className="text-center text-muted-foreground">No quotes found</p>
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-full bg-secondary/10">
+                  <Calendar className="h-5 w-5 text-secondary" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Pending</p>
+                  <p className="text-2xl font-bold">
+                    {quotes.filter(q => q.status === "pending").length}
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
-        ) : (
-          quotes.map((quote) => (
-            <Card key={quote.id}>
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle>{quote.customer_name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{quote.customer_email}</p>
-                  </div>
-                  <Badge variant={
-                    quote.status === "approved" ? "default" :
-                    quote.status === "rejected" ? "destructive" :
-                    "secondary"
-                  }>
-                    {quote.status}
-                  </Badge>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-full bg-primary/10">
+                  <CheckCircle className="h-5 w-5 text-primary" />
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => updateQuoteStatus(quote.id, "approved")}
-                    disabled={quote.status === "approved"}
-                    size="sm"
-                  >
-                    Approve
-                  </Button>
-                  <Button
-                    onClick={() => updateQuoteStatus(quote.id, "rejected")}
-                    disabled={quote.status === "rejected"}
-                    variant="destructive"
-                    size="sm"
-                  >
-                    Reject
-                  </Button>
+                <div>
+                  <p className="text-sm text-muted-foreground">Approved</p>
+                  <p className="text-2xl font-bold">
+                    {quotes.filter(q => q.status === "approved").length}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-full bg-destructive/10">
+                  <XCircle className="h-5 w-5 text-destructive" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Rejected</p>
+                  <p className="text-2xl font-bold">
+                    {quotes.filter(q => q.status === "rejected").length}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quotes List */}
+        <div className="grid gap-4">
+          {quotes.length === 0 ? (
+            <Card>
+              <CardContent className="p-12">
+                <div className="text-center">
+                  <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
+                    <Mail className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">No quotes yet</h3>
+                  <p className="text-muted-foreground">
+                    Customer quote requests will appear here
+                  </p>
                 </div>
               </CardContent>
             </Card>
-          ))
-        )}
+          ) : (
+            quotes.map((quote) => (
+              <Card key={quote.id} className="hover:shadow-md transition-shadow">
+                <CardHeader>
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-xl">{quote.customer_name}</CardTitle>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+                        <Mail className="h-4 w-4" />
+                        <a 
+                          href={`mailto:${quote.customer_email}`}
+                          className="hover:text-primary hover:underline"
+                        >
+                          {quote.customer_email}
+                        </a>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Calendar className="h-4 w-4" />
+                        <span>
+                          {new Date(quote.created_at).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                    <Badge variant={getStatusVariant(quote.status)}>
+                      {quote.status.charAt(0).toUpperCase() + quote.status.slice(1)}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => updateQuoteStatus(quote.id, "approved")}
+                      disabled={quote.status === "approved"}
+                      size="sm"
+                      className="flex-1"
+                    >
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                      Approve
+                    </Button>
+                    <Button
+                      onClick={() => updateQuoteStatus(quote.id, "rejected")}
+                      disabled={quote.status === "rejected"}
+                      variant="destructive"
+                      size="sm"
+                      className="flex-1"
+                    >
+                      <XCircle className="mr-2 h-4 w-4" />
+                      Reject
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 
