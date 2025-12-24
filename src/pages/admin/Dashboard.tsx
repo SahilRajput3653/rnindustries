@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Navbar } from "@/components/Navbar";
+import { AdminLayout } from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Package, ShoppingCart, DollarSign, TrendingUp } from "lucide-react";
+import { Package, FileText, DollarSign, AlertTriangle, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalProducts: 0,
-    totalOrders: 0,
+    pendingQuotes: 0,
     totalRevenue: 0,
-    pendingOrders: 0
+    lowStockItems: 0,
+    totalProfit: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -50,18 +50,22 @@ export default function AdminDashboard() {
 
   const loadStats = async () => {
     try {
-      const [productsRes, ordersRes] = await Promise.all([
-        supabase.from("products").select("id", { count: "exact" }),
+      const [productsRes, quotesRes, ordersRes] = await Promise.all([
+        supabase.from("products").select("id, stock"),
+        supabase.from("quotes").select("id, status"),
         supabase.from("orders").select("id, status, total_amount")
       ]);
 
-      const totalProducts = productsRes.count || 0;
+      const totalProducts = productsRes.data?.length || 0;
+      const lowStockItems = productsRes.data?.filter(p => p.stock < 10).length || 0;
+      const pendingQuotes = quotesRes.data?.filter(q => q.status === "pending").length || 0;
+      
       const orders = ordersRes.data || [];
-      const totalOrders = orders.length;
-      const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total_amount), 0);
-      const pendingOrders = orders.filter(o => o.status === "pending").length;
+      const completedOrders = orders.filter(o => o.status === "completed");
+      const totalRevenue = completedOrders.reduce((sum, order) => sum + Number(order.total_amount), 0);
+      const totalProfit = totalRevenue * 0.3;
 
-      setStats({ totalProducts, totalOrders, totalRevenue, pendingOrders });
+      setStats({ totalProducts, pendingQuotes, totalRevenue, lowStockItems, totalProfit });
     } catch (error) {
       console.error("Error loading stats:", error);
       toast.error("Failed to load statistics");
@@ -70,90 +74,65 @@ export default function AdminDashboard() {
     }
   };
 
-  const StatCard = ({ title, value, icon: Icon, onClick }: any) => (
-    <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer" onClick={onClick}>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-      </CardContent>
-    </Card>
-  );
-
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Manage your store</p>
-          </div>
-          <Button onClick={() => navigate("/")} variant="outline">
-            Back to Store
-          </Button>
+    <AdminLayout title="Admin Panel">
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-3xl font-bold mb-2">Dashboard Overview</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatCard
-            title="Total Products"
-            value={stats.totalProducts}
-            icon={Package}
-            onClick={() => navigate("/admin/products")}
-          />
-          <StatCard
-            title="Total Orders"
-            value={stats.totalOrders}
-            icon={ShoppingCart}
-            onClick={() => navigate("/admin/orders")}
-          />
-          <StatCard
-            title="Total Revenue"
-            value={`$${stats.totalRevenue.toFixed(2)}`}
-            icon={DollarSign}
-            onClick={() => navigate("/admin/analytics")}
-          />
-          <StatCard
-            title="Pending Orders"
-            value={stats.pendingOrders}
-            icon={TrendingUp}
-            onClick={() => navigate("/admin/orders")}
-          />
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card className="hover:shadow-lg transition-all duration-300">
-            <CardHeader>
-              <CardTitle>Product Management</CardTitle>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/admin/products")}>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+              <Package className="h-5 w-5 text-primary" />
             </CardHeader>
-            <CardContent className="space-y-3">
-              <Button className="w-full" onClick={() => navigate("/admin/products")}>
-                Manage Products
-              </Button>
-              <Button className="w-full" variant="outline" onClick={() => navigate("/admin/products/new")}>
-                Add New Product
-              </Button>
+            <CardContent>
+              <div className="text-3xl font-bold">{stats.totalProducts}</div>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-300">
-            <CardHeader>
-              <CardTitle>Order Management</CardTitle>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/admin/quotes")}>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Pending Quotes</CardTitle>
+              <FileText className="h-5 w-5 text-yellow-600" />
             </CardHeader>
-            <CardContent className="space-y-3">
-              <Button className="w-full" onClick={() => navigate("/admin/orders")}>
-                View All Orders
-              </Button>
-              <Button className="w-full" variant="outline" onClick={() => navigate("/admin/analytics")}>
-                View Analytics
-              </Button>
+            <CardContent>
+              <div className="text-3xl font-bold">{stats.pendingQuotes}</div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+              <DollarSign className="h-5 w-5 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">${stats.totalRevenue.toFixed(2)}</div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/admin/products")}>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Low Stock Items</CardTitle>
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{stats.lowStockItems}</div>
             </CardContent>
           </Card>
         </div>
+
+        <Card className="bg-gradient-to-br from-green-500/10 to-green-600/10 border-green-600/20">
+          <CardHeader className="flex flex-row items-center gap-2">
+            <TrendingUp className="h-6 w-6 text-green-600" />
+            <CardTitle>Total Profit</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-bold text-green-600">${stats.totalProfit.toFixed(2)}</div>
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

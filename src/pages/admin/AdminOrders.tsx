@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Navbar } from "@/components/Navbar";
+import { AdminLayout } from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -83,19 +83,9 @@ export default function AdminOrders() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Order Management</h1>
-            <p className="text-muted-foreground">{orders.length} total orders</p>
-          </div>
-          <Button onClick={() => navigate("/admin")} variant="outline">
-            Back to Dashboard
-          </Button>
-        </div>
+    <AdminLayout title="Order Management">
+      <div className="space-y-6">
+        <p className="text-muted-foreground">{orders.length} total orders</p>
 
         <div className="space-y-4">
           {orders.map((order) => (
@@ -143,6 +133,6 @@ export default function AdminOrders() {
           ))}
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 }
