@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
+type QuoteStatus = "pending" | "approved" | "rejected";
+
 type Quote = {
   id: string;
   customer_name: string;
   customer_email: string;
-  status: "pending" | "approved" | "rejected";
+  status: QuoteStatus;
   created_at: string;
 };
 
@@ -58,7 +60,7 @@ const AdminQuotes = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setQuotes(data || []);
+      setQuotes((data as Quote[]) || []);
     } catch (error) {
       console.error("Error loading quotes:", error);
       toast.error("Failed to load quotes");
@@ -67,7 +69,7 @@ const AdminQuotes = () => {
     }
   };
 
-  const updateQuoteStatus = async (id: string, status: "approved" | "rejected") => {
+  const updateQuoteStatus = async (id: string, status: QuoteStatus) => {
     try {
       const { error } = await supabase
         .from("quotes")
