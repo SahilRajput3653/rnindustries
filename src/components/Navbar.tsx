@@ -136,9 +136,121 @@ export function Navbar() {
                   {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-64">
-                <div className="flex flex-col space-y-4 mt-8">
-                  <NavLinks />
+              <SheetContent side="right" className="w-72 p-0">
+                <div className="flex flex-col h-full bg-background">
+                  {/* Close button */}
+                  <div className="flex justify-end p-4 border-b">
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => setMobileOpen(false)}
+                      className="rounded-full"
+                    >
+                      <X className="h-5 w-5" />
+                    </Button>
+                  </div>
+
+                  {/* Navigation Links */}
+                  <div className="flex flex-col p-6 space-y-1">
+                    <Link 
+                      to="/" 
+                      onClick={() => setMobileOpen(false)}
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors py-3 px-2"
+                    >
+                      Home
+                    </Link>
+                    <Link 
+                      to="/products" 
+                      onClick={() => setMobileOpen(false)}
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors py-3 px-2"
+                    >
+                      Products
+                    </Link>
+                    <Link 
+                      to="/about" 
+                      onClick={() => setMobileOpen(false)}
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors py-3 px-2"
+                    >
+                      About
+                    </Link>
+                    <Link 
+                      to="/contact" 
+                      onClick={() => setMobileOpen(false)}
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors py-3 px-2"
+                    >
+                      Contact
+                    </Link>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="border-t mx-6" />
+
+                  {/* User Section */}
+                  <div className="flex flex-col p-6 space-y-3">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        navigate("/cart");
+                        setMobileOpen(false);
+                      }}
+                    >
+                      <ShoppingCart className="mr-2 h-4 w-4" />
+                      Cart
+                    </Button>
+
+                    {user ? (
+                      <>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start"
+                          onClick={() => {
+                            navigate("/orders");
+                            setMobileOpen(false);
+                          }}
+                        >
+                          <User className="mr-2 h-4 w-4" />
+                          My Orders
+                        </Button>
+                        
+                        {isAdmin && (
+                          <Button
+                            variant="outline"
+                            className="w-full justify-start"
+                            onClick={() => {
+                              navigate("/admin");
+                              setMobileOpen(false);
+                            }}
+                          >
+                            <Shield className="mr-2 h-4 w-4" />
+                            Admin Dashboard
+                          </Button>
+                        )}
+
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-destructive hover:text-destructive"
+                          onClick={() => {
+                            handleSignOut();
+                            setMobileOpen(false);
+                          }}
+                        >
+                          <LogOut className="mr-2 h-4 w-4" />
+                          Sign Out
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        className="w-full"
+                        onClick={() => {
+                          navigate("/auth");
+                          setMobileOpen(false);
+                        }}
+                      >
+                        Sign In
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>
