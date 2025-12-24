@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
+import { ImageUpload } from "@/components/ImageUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,7 @@ type Product = {
   price: number;
   stock: number;
   image_url: string | null;
+  image_urls: string[];
   category: string | null;
   is_active: boolean;
 };
@@ -35,7 +37,7 @@ export default function AdminProducts() {
     price: "",
     stock: "",
     category: "",
-    image_url: ""
+    image_urls: [] as string[]
   });
 
   useEffect(() => {
@@ -89,7 +91,8 @@ export default function AdminProducts() {
       price: parseFloat(formData.price),
       stock: parseInt(formData.stock),
       category: formData.category || null,
-      image_url: formData.image_url || null,
+      image_urls: formData.image_urls,
+      image_url: formData.image_urls.length > 0 ? formData.image_urls[0] : null,
       is_active: true
     };
 
@@ -128,7 +131,7 @@ export default function AdminProducts() {
       price: product.price.toString(),
       stock: product.stock.toString(),
       category: product.category || "",
-      image_url: product.image_url || ""
+      image_urls: product.image_urls || []
     });
     setDialogOpen(true);
   };
@@ -159,7 +162,7 @@ export default function AdminProducts() {
       price: "",
       stock: "",
       category: "",
-      image_url: ""
+      image_urls: []
     });
   };
 
@@ -248,15 +251,11 @@ export default function AdminProducts() {
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="image_url">Image URL</Label>
-                    <Input
-                      id="image_url"
-                      type="url"
-                      value={formData.image_url}
-                      onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    />
-                  </div>
+                  <ImageUpload
+                    images={formData.image_urls}
+                    onChange={(urls) => setFormData({ ...formData, image_urls: urls })}
+                    maxImages={5}
+                  />
 
                   <Button type="submit" className="w-full">
                     {editingProduct ? "Update Product" : "Create Product"}
@@ -271,6 +270,25 @@ export default function AdminProducts() {
           {products.map((product) => (
             <Card key={product.id}>
               <CardHeader className="pb-3">
+                <div className="aspect-video overflow-hidden bg-muted rounded-lg mb-3">
+                  {product.image_urls && product.image_urls.length > 0 ? (
+                    <img
+                      src={product.image_urls[0]}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : product.image_url ? (
+                    <img
+                      src={product.image_url}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="text-muted-foreground text-xs">No image</span>
+                    </div>
+                  )}
+                </div>
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-lg">{product.name}</CardTitle>
                   <Badge variant={product.is_active ? "default" : "secondary"}>

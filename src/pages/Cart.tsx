@@ -12,6 +12,7 @@ type CartItem = {
   description: string;
   price: number;
   image_url: string | null;
+  image_urls?: string[];
   quantity: number;
 };
 
@@ -75,7 +76,13 @@ export default function Cart() {
                   <CardContent className="p-6">
                     <div className="flex gap-4">
                       <div className="w-24 h-24 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                        {item.image_url ? (
+                        {item.image_urls && item.image_urls.length > 0 ? (
+                          <img
+                            src={item.image_urls[0]}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : item.image_url ? (
                           <img
                             src={item.image_url}
                             alt={item.name}
