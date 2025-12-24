@@ -16,6 +16,7 @@ type Product = {
   price: number;
   stock: number;
   image_url: string | null;
+  image_urls: string[];
   category: string | null;
   specifications: any;
 };
@@ -25,6 +26,7 @@ export default function ProductDetail() {
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
     if (id) loadProduct(id);
@@ -96,23 +98,54 @@ export default function ProductDetail() {
         </Button>
 
         <div className="grid md:grid-cols-2 gap-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="aspect-square overflow-hidden rounded-lg bg-muted">
-                {product.image_url ? (
-                  <img
-                    src={product.image_url}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Package className="h-24 w-24 text-muted-foreground" />
-                  </div>
-                )}
+          <div className="space-y-4">
+            <Card>
+              <CardContent className="p-6">
+                <div className="aspect-square overflow-hidden rounded-lg bg-muted">
+                  {product.image_urls && product.image_urls.length > 0 ? (
+                    <img
+                      src={product.image_urls[selectedImage]}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : product.image_url ? (
+                    <img
+                      src={product.image_url}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Package className="h-24 w-24 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Image Thumbnails */}
+            {product.image_urls && product.image_urls.length > 1 && (
+              <div className="grid grid-cols-4 gap-2">
+                {product.image_urls.map((url, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImage(index)}
+                    className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                      selectedImage === index
+                        ? "border-primary"
+                        : "border-transparent hover:border-muted-foreground"
+                    }`}
+                  >
+                    <img
+                      src={url}
+                      alt={`${product.name} ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
               </div>
-            </CardContent>
-          </Card>
+            )}
+          </div>
 
           <div className="space-y-6">
             <div>

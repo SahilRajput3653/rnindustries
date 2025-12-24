@@ -16,6 +16,7 @@ type Product = {
   price: number;
   stock: number;
   image_url: string | null;
+  image_urls: string[];
   category: string | null;
 };
 
@@ -100,7 +101,13 @@ export default function Products() {
               <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
                 <CardHeader className="p-0">
                   <div className="aspect-video overflow-hidden bg-muted">
-                    {product.image_url ? (
+                    {product.image_urls && product.image_urls.length > 0 ? (
+                      <img
+                        src={product.image_urls[0]}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : product.image_url ? (
                       <img
                         src={product.image_url}
                         alt={product.name}
