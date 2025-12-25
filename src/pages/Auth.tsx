@@ -13,6 +13,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +61,26 @@ const Auth = () => {
     }
   };
 
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) throw error;
+
+      toast.success("Password reset email sent! Check your inbox.");
+      setResetEmail("");
+    } catch (error: any) {
+      toast.error(error.message || "Error sending reset email");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
@@ -69,9 +90,10 @@ const Auth = () => {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="reset">Reset</TabsTrigger>
             </TabsList>
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4">
@@ -99,6 +121,19 @@ const Auth = () => {
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Signing in..." : "Sign In"}
                 </Button>
+                <div className="text-center mt-2">
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="text-sm text-muted-foreground"
+                    onClick={() => {
+                      const resetTab = document.querySelector('[value="reset"]') as HTMLButtonElement;
+                      resetTab?.click();
+                    }}
+                  >
+                    Forgot password?
+                  </Button>
+                </div>
               </form>
             </TabsContent>
             <TabsContent value="signup">
@@ -127,6 +162,27 @@ const Auth = () => {
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Signing up..." : "Sign Up"}
+                </Button>
+              </form>
+            </TabsContent>
+            <TabsContent value="reset">
+              <form onSubmit={handlePasswordReset} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="reset-email">Email</Label>
+                  <Input
+                    id="reset-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Enter your email address and we'll send you a link to reset your password.
+                </p>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? "Sending..." : "Send Reset Link"}
                 </Button>
               </form>
             </TabsContent>
