@@ -109,3 +109,31 @@ All colors MUST be HSL.
 @layer utilities {
   /* Add any custom utilities here */
 }
+
+/* Print Styles for Invoice */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  #invoice-content,
+  #invoice-content * {
+    visibility: visible;
+  }
+  
+  #invoice-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 20px;
+  }
+  
+  .print\\:hidden {
+    display: none !important;
+  }
+  
+  @page {
+    margin: 1cm;
+  }
+}
