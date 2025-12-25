@@ -159,7 +159,7 @@ export default function ProductDetail() {
                 )}
               </div>
               <p className="text-3xl font-bold text-primary mb-4">
-                ${product.price.toFixed(2)}
+                ₹{product.price.toFixed(2)}
               </p>
               <div className="flex flex-col gap-2">
                 {product.stock === 0 ? (

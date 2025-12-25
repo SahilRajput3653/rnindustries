@@ -121,7 +121,7 @@ export default function AdminDashboard() {
               <DollarSign className="h-5 w-5 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">${stats.totalRevenue.toFixed(2)}</div>
+              <div className="text-3xl font-bold">₹{stats.totalRevenue.toFixed(2)}</div>
             </CardContent>
           </Card>
 
@@ -143,7 +143,7 @@ export default function AdminDashboard() {
             <CardTitle>Total Profit</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold text-green-600">${stats.totalProfit.toFixed(2)}</div>
+            <div className="text-4xl font-bold text-green-600">₹{stats.totalProfit.toFixed(2)}</div>
           </CardContent>
         </Card>
       </div>
