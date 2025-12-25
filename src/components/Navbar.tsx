@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { ShoppingCart, Menu, X, User, LogOut, Shield, Mail } from "lucide-react";
+import { ShoppingCart, Menu, X, User, LogOut, Shield, Mail, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -113,6 +113,9 @@ export function Navbar() {
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => navigate("/orders")}>
                     My Orders
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/my-quotes")}>
+                    My Quotes
                   </DropdownMenuItem>
                   {isAdmin && (
                     <>
@@ -249,6 +252,18 @@ export function Navbar() {
                             >
                               <User className="mr-3 h-4 w-4" />
                               My Orders
+                            </Button>
+
+                            <Button
+                              variant="ghost"
+                              className="w-full justify-start hover:bg-primary/5 hover:text-primary"
+                              onClick={() => {
+                                navigate("/my-quotes");
+                                setMobileOpen(false);
+                              }}
+                            >
+                              <FileText className="mr-3 h-4 w-4" />
+                              My Quotes
                             </Button>
                             
                             {isAdmin && (
