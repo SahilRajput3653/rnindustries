@@ -14,6 +14,7 @@ import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
+import MyQuotes from "./pages/MyQuotes";
 import ResetPassword from "./pages/ResetPassword";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
@@ -45,6 +46,7 @@ const App = () => {
               <Route path="/orders" element={<Orders />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
+              <Route path="/my-quotes" element={<MyQuotes />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/products" element={<AdminProducts />} />
               <Route path="/admin/orders" element={<AdminOrders />} />
