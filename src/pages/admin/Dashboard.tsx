@@ -125,13 +125,14 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/admin/products")}>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/admin/stock")}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Low Stock Items</CardTitle>
               <AlertTriangle className="h-5 w-5 text-red-600" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.lowStockItems}</div>
+              <p className="text-xs text-muted-foreground mt-1">Click to manage stock</p>
             </CardContent>
           </Card>
         </div>

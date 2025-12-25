@@ -10,12 +10,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { User } from "@supabase/supabase-js";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type CartItem = {
   id: string;
   name: string;
   price: number;
   quantity: number;
+  stock?: number;
 };
 
 export default function Checkout() {
@@ -23,6 +26,7 @@ export default function Checkout() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [stockIssues, setStockIssues] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -47,14 +51,44 @@ export default function Checkout() {
     setFormData(prev => ({ ...prev, email: user.email || "" }));
   };
 
-  const loadCart = () => {
+  const loadCart = async () => {
     const savedCart = JSON.parse(localStorage.getItem("cart") || "[]");
     if (savedCart.length === 0) {
       toast.error("Your cart is empty");
       navigate("/cart");
       return;
     }
-    setCart(savedCart);
+    
+    // Fetch current stock levels for all cart items
+    const productIds = savedCart.map((item: CartItem) => item.id);
+    const { data: products, error } = await supabase
+      .from("products")
+      .select("id, stock")
+      .in("id", productIds);
+
+    if (error) {
+      console.error("Error loading stock:", error);
+      setCart(savedCart);
+      return;
+    }
+
+    // Add stock info to cart items and check for issues
+    const issues: string[] = [];
+    const updatedCart = savedCart.map((item: CartItem) => {
+      const product = products?.find(p => p.id === item.id);
+      const stock = product?.stock || 0;
+      
+      if (stock === 0) {
+        issues.push(`${item.name} is out of stock`);
+      } else if (item.quantity > stock) {
+        issues.push(`${item.name}: only ${stock} available (you have ${item.quantity} in cart)`);
+      }
+      
+      return { ...item, stock };
+    });
+
+    setCart(updatedCart);
+    setStockIssues(issues);
   };
 
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -63,8 +97,33 @@ export default function Checkout() {
     e.preventDefault();
     if (!user) return;
 
+    // Validate stock before placing order
+    if (stockIssues.length > 0) {
+      toast.error("Please resolve stock issues before checking out");
+      return;
+    }
+
     setLoading(true);
     try {
+      // Double-check stock availability right before order
+      for (const item of cart) {
+        const { data: product, error } = await supabase
+          .from("products")
+          .select("stock")
+          .eq("id", item.id)
+          .single();
+
+        if (error) throw error;
+        
+        if (product.stock < item.quantity) {
+          toast.error(`Not enough stock for ${item.name}. Available: ${product.stock}`);
+          // Refresh cart to show updated stock
+          await loadCart();
+          setLoading(false);
+          return;
+        }
+      }
+
       // Create order
       const { data: order, error: orderError } = await supabase
         .from("orders")
@@ -104,7 +163,10 @@ export default function Checkout() {
           product_id: item.id,
           quantity: item.quantity
         });
-        if (error) console.error("Stock update error:", error);
+        if (error) {
+          console.error("Stock update error:", error);
+          toast.error(`Warning: Stock update failed for ${item.name}`);
+        }
       }
 
       // Clear cart
@@ -113,7 +175,7 @@ export default function Checkout() {
       navigate("/orders");
     } catch (error) {
       console.error("Checkout error:", error);
-      toast.error("Failed to place order");
+      toast.error("Failed to place order. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -128,8 +190,26 @@ export default function Checkout() {
           <h1 className="text-4xl font-bold mb-8">Checkout</h1>
 
           <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <Card>
+          <div className="lg:col-span-2 space-y-6">
+            {/* Stock Issues Alert */}
+            {stockIssues.length > 0 && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <div className="font-semibold mb-2">Stock Availability Issues:</div>
+                  <ul className="list-disc list-inside space-y-1">
+                    {stockIssues.map((issue, index) => (
+                      <li key={index} className="text-sm">{issue}</li>
+                    ))}
+                  </ul>
+                  <p className="text-sm mt-2">
+                    Please update your cart before proceeding to checkout.
+                  </p>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <Card>
                 <CardHeader>
                   <CardTitle>Shipping Information</CardTitle>
                 </CardHeader>
@@ -188,8 +268,13 @@ export default function Checkout() {
                       />
                     </div>
 
-                    <Button type="submit" className="w-full" size="lg" disabled={loading}>
-                      {loading ? "Processing..." : "Place Order"}
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      size="lg" 
+                      disabled={loading || stockIssues.length > 0}
+                    >
+                      {loading ? "Processing..." : stockIssues.length > 0 ? "Resolve Stock Issues" : "Place Order"}
                     </Button>
                   </form>
                 </CardContent>

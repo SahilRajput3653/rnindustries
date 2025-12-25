@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, ShoppingCart, Package } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Package, AlertCircle, TrendingDown, PackageCheck } from "lucide-react";
 import { toast } from "sonner";
 
 type Product = {
@@ -161,9 +161,29 @@ export default function ProductDetail() {
               <p className="text-3xl font-bold text-primary mb-4">
                 ${product.price.toFixed(2)}
               </p>
-              <Badge variant={product.stock > 0 ? "default" : "destructive"}>
-                {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
-              </Badge>
+              <div className="flex flex-col gap-2">
+                {product.stock === 0 ? (
+                  <Badge variant="destructive" className="w-fit flex items-center gap-1">
+                    <AlertCircle className="h-4 w-4" />
+                    Out of Stock
+                  </Badge>
+                ) : product.stock <= 10 ? (
+                  <div className="flex flex-col gap-1">
+                    <Badge variant="secondary" className="w-fit flex items-center gap-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                      <TrendingDown className="h-4 w-4" />
+                      Low Stock
+                    </Badge>
+                    <p className="text-sm text-yellow-700 dark:text-yellow-300 font-medium">
+                      Only {product.stock} units remaining! Order soon.
+                    </p>
+                  </div>
+                ) : (
+                  <Badge variant="default" className="w-fit flex items-center gap-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                    <PackageCheck className="h-4 w-4" />
+                    {product.stock} in stock
+                  </Badge>
+                )}
+              </div>
             </div>
 
             <div>
