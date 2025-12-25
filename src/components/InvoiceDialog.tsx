@@ -207,9 +207,9 @@ export function InvoiceDialog({ order, open, onOpenChange }: InvoiceDialogProps)
                           </p>
                         </td>
                         <td className="text-right p-3">{item.quantity}</td>
-                        <td className="text-right p-3">${item.unit_price.toFixed(2)}</td>
+                        <td className="text-right p-3">₹{item.unit_price.toFixed(2)}</td>
                         <td className="text-right p-3 font-medium">
-                          ${item.subtotal.toFixed(2)}
+                          ₹{item.subtotal.toFixed(2)}
                         </td>
                       </tr>
                     ))
@@ -226,7 +226,7 @@ export function InvoiceDialog({ order, open, onOpenChange }: InvoiceDialogProps)
               <div className="flex justify-between items-center py-3">
                 <span className="text-xl font-bold">TOTAL</span>
                 <span className="text-2xl font-bold text-primary">
-                  ${order.total_amount.toFixed(2)}
+                  ₹{order.total_amount.toFixed(2)}
                 </span>
               </div>
             </div>

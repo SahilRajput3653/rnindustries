@@ -134,7 +134,7 @@ export default function Products() {
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-bold text-primary">
-                        ${product.price.toFixed(2)}
+                        ₹{product.price.toFixed(2)}
                       </span>
                     </div>
                     {product.stock === 0 ? (

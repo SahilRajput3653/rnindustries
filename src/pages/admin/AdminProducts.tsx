@@ -292,7 +292,7 @@ export default function AdminProducts() {
                 </p>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xl font-bold text-primary">
-                    ${product.price.toFixed(2)}
+                    ₹{product.price.toFixed(2)}
                   </span>
                   <Badge variant={product.stock > 0 ? "default" : "destructive"}>
                     Stock: {product.stock}

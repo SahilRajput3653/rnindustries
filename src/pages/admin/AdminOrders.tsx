@@ -199,7 +199,7 @@ export default function AdminOrders() {
                     <div className="pt-2 border-t">
                       <p className="text-sm text-muted-foreground">Total Amount</p>
                       <p className="text-2xl font-bold text-primary">
-                        ${order.total_amount.toFixed(2)}
+                        ₹{order.total_amount.toFixed(2)}
                       </p>
                     </div>
                   </div>
