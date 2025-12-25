@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Package, FileText, MessageSquare, BarChart3, Settings, LogOut, Sun, Moon } from "lucide-react";
+import { LayoutDashboard, Package, FileText, MessageSquare, BarChart3, Settings, LogOut, Sun, Moon, PackageCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ThemeProvider";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,6 +17,7 @@ export function AdminSidebar({ onNavigate }: AdminSidebarProps = {}) {
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
     { icon: Package, label: "Products", path: "/admin/products" },
+    { icon: PackageCheck, label: "Stock", path: "/admin/stock" },
     { icon: FileText, label: "Quotes", path: "/admin/quotes" },
     { icon: MessageSquare, label: "Messages", path: "/admin/messages" },
     { icon: BarChart3, label: "Analytics", path: "/admin/analytics" },

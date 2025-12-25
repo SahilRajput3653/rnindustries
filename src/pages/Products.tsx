@@ -131,13 +131,25 @@ export default function Products() {
                   <p className="text-muted-foreground line-clamp-2 mb-4">
                     {product.description}
                   </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-primary">
-                      ${product.price.toFixed(2)}
-                    </span>
-                    <Badge variant={product.stock > 0 ? "default" : "destructive"}>
-                      {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
-                    </Badge>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-bold text-primary">
+                        ${product.price.toFixed(2)}
+                      </span>
+                    </div>
+                    {product.stock === 0 ? (
+                      <Badge variant="destructive" className="w-fit">
+                        Out of Stock
+                      </Badge>
+                    ) : product.stock <= 10 ? (
+                      <Badge variant="secondary" className="w-fit bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                        Only {product.stock} left in stock!
+                      </Badge>
+                    ) : (
+                      <Badge variant="default" className="w-fit bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                        {product.stock} in stock
+                      </Badge>
+                    )}
                   </div>
                 </CardContent>
                 <CardFooter className="p-6 pt-0 flex gap-2">
